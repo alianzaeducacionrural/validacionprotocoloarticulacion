@@ -1,0 +1,205 @@
+.paso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.titulo {
+  font-size: 1.375rem;
+}
+
+@media (min-width: 48rem) {
+  .titulo {
+    font-size: 1.625rem;
+  }
+}
+
+.descripcion {
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+  max-width: var(--ancho-lectura);
+}
+
+/* Agrupaciones de campos — la franja superior de color y el icono son lo
+   que rompe la monotonía gris cuando hay varias tarjetas seguidas. */
+.grupo {
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  background: var(--fondo);
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--acento);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.leyenda {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm);
+  margin-left: calc(var(--space-sm) * -1);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--acento-oscuro);
+}
+
+.leyenda svg {
+  flex-shrink: 0;
+}
+
+/* El <legend> debe seguir siendo hijo directo del <fieldset> (así lo exige
+   su semántica), así que el espaciado entre bloques va en este contenedor,
+   no en el propio .grupo. */
+.grupoContenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* Una pregunta por fila: más fácil de leer y de llenar que dos columnas. */
+.rejilla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.rejilla > * {
+  max-width: 26rem;
+}
+
+/* Dato fijo, no editable — misma altura y ritmo visual que un campo real
+   para que no rompa el recorrido, pero con apariencia claramente distinta. */
+.campoFijo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-width: 26rem;
+}
+
+.etiquetaFija {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--tinta);
+}
+
+.valorFijo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: var(--alto-toque);
+  padding: 0.5rem 0.875rem;
+  width: fit-content;
+  background: var(--acento-tenue);
+  border: 1px solid var(--acento);
+  border-radius: var(--radio-md);
+}
+
+.valorFijoNumero {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--acento);
+  border-radius: var(--radio-sm);
+  font-family: var(--fuente-mono);
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #fff;
+}
+
+.valorFijoTexto {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--acento-oscuro);
+}
+
+.notaFija {
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+}
+
+.rejillaConsolidado {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 48rem) {
+  .rejillaConsolidado {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Resumen numérico del paso final */
+.resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.dato {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 8rem;
+  gap: 2px;
+  padding: var(--space-md);
+  background: var(--superficie);
+  border-radius: var(--radio-md);
+}
+
+.datoValor {
+  font-family: var(--fuente-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--tinta-fuerte);
+}
+
+.datoTotal {
+  font-size: 1rem;
+  color: var(--tinta-tenue);
+}
+
+.datoEtiqueta {
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+}
+
+.faltantes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.faltantes li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.enlaceCriterio {
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.faltantesConteo {
+  font-size: 0.8125rem;
+  opacity: 0.8;
+}

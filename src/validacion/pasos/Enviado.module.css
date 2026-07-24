@@ -1,0 +1,33 @@
+.enviado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) 0;
+  text-align: center;
+}
+
+.icono {
+  color: var(--exito);
+}
+
+.titulo {
+  font-size: 1.5rem;
+}
+
+.texto {
+  max-width: 44ch;
+  color: var(--tinta);
+}
+
+.nota {
+  max-width: 52ch;
+  font-size: 0.875rem;
+  color: var(--tinta-suave);
+}

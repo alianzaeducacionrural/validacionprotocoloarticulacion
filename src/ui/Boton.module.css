@@ -1,0 +1,67 @@
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: var(--alto-toque);
+  padding: 0.5rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: var(--radio-md);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion),
+    opacity var(--transicion);
+}
+
+.boton:disabled {
+  opacity: 0.55;
+}
+
+.primario {
+  background: var(--acento);
+  color: #fff;
+}
+
+.primario:hover:not(:disabled) {
+  background: var(--acento-oscuro);
+}
+
+.secundario {
+  background: var(--fondo);
+  border-color: var(--borde-fuerte);
+  color: var(--tinta);
+}
+
+.secundario:hover:not(:disabled) {
+  border-color: var(--tinta-suave);
+  background: var(--superficie);
+}
+
+.texto {
+  background: transparent;
+  color: var(--acento);
+  padding-inline: var(--space-sm);
+}
+
+.texto:hover:not(:disabled) {
+  background: var(--acento-tenue);
+}
+
+.girador {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}

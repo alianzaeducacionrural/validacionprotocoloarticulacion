@@ -1,0 +1,56 @@
+.contenedor {
+  max-width: var(--ancho-contenido);
+  /* El padding inferior deja aire por encima de la barra fija de navegación. */
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) calc(var(--alto-toque) + var(--space-2xl));
+}
+
+.contenedor:focus {
+  outline: none;
+}
+
+.contenedorSimple {
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+/* En escritorio el contenido flota como tarjeta sobre el fondo gris del
+   body: le da profundidad y hace más evidente dónde empieza y termina
+   el formulario. En móvil se mantiene a sangre completa. */
+@media (min-width: 60rem) {
+  .contenedor,
+  .contenedorSimple {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra-md);
+    padding-left: var(--space-2xl);
+    padding-right: var(--space-2xl);
+  }
+
+  .contenedor {
+    padding-bottom: calc(var(--alto-toque) + var(--space-2xl));
+  }
+}
+
+.navegacion {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  background: var(--fondo);
+  border-top: 1px solid var(--borde);
+  /* Respeta la barra de gestos en iOS */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.navegacionInterior {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-md);
+}

@@ -1,0 +1,27 @@
+.franja {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.logo {
+  width: auto;
+  object-fit: contain;
+}
+
+/* Alturas fijas por tamaño: los tres logos tienen proporciones distintas,
+   así que se igualan por altura, no por ancho. */
+.normal .logo {
+  height: 2.25rem;
+}
+
+.compacto .logo {
+  height: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .normal .logo {
+    height: 2.75rem;
+  }
+}

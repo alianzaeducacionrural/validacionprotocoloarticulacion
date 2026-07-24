@@ -1,0 +1,4 @@
+# El panel de administración no tiene credenciales: su única protección es que
+# nadie sepa que existe. Ningún buscador debe indexar este sitio.
+User-agent: *
+Disallow: /

@@ -1,0 +1,45 @@
+name: Desplegar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Construir
+        run: npm run build
+        env:
+          VITE_GAS_URL: ${{ secrets.VITE_GAS_URL }}
+
+      # GitHub Pages no reescribe rutas: al entrar directo a /admin devolvería
+      # 404. Sirviendo el mismo index.html como 404.html, React Router toma el
+      # control y la URL se mantiene limpia. Es lo que hace accesible el panel.
+      - name: Habilitar rutas del SPA
+        run: cp dist/index.html dist/404.html
+
+      - name: Publicar
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

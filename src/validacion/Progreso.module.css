@@ -1,0 +1,55 @@
+.contenedor {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--fondo);
+  border-bottom: 1px solid var(--borde);
+}
+
+.interior {
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-md) 0;
+}
+
+.textos {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-bottom: var(--space-sm);
+}
+
+.paso {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--tinta);
+}
+
+.conteo {
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+}
+
+.numero {
+  font-family: var(--fuente-mono);
+  font-weight: 600;
+  color: var(--tinta);
+}
+
+.deTotal {
+  font-family: var(--fuente-mono);
+}
+
+.barra {
+  height: 3px;
+  background: var(--borde);
+  overflow: hidden;
+}
+
+.relleno {
+  height: 100%;
+  background: var(--acento);
+  transition: width var(--transicion);
+}

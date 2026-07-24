@@ -1,0 +1,75 @@
+/* Tokens del sistema de diseño — grafito + teal técnico.
+   Contrastes verificados en design-system/validacion-protocolo-articulacion/MASTER.md */
+
+:root {
+  /* Neutros */
+  --grafito-900: #111820;
+  --grafito-700: #1f2933;
+  --grafito-500: #52606d;
+  --grafito-300: #9aa5b1;
+  --grafito-100: #d9dde3;
+  --grafito-050: #f4f5f7;
+
+  /* Acento */
+  --teal-700: #00505f;
+  --teal-600: #006c84;
+  --teal-050: #e6f2f5;
+
+  /* Semánticos */
+  --fondo: #ffffff;
+  --superficie: var(--grafito-050);
+  --tinta: var(--grafito-700);
+  --tinta-fuerte: var(--grafito-900);
+  --tinta-suave: var(--grafito-500);
+  --tinta-tenue: var(--grafito-300);
+  --borde: var(--grafito-100);
+  --borde-fuerte: var(--grafito-300);
+  --acento: var(--teal-600);
+  --acento-oscuro: var(--teal-700);
+  --acento-tenue: var(--teal-050);
+
+  /* Escala de valoración — todos ≥ 4.5:1 sobre blanco */
+  --nivel-1: #c0392b;
+  --nivel-2: #b45309;
+  --nivel-3: #8a6a00;
+  --nivel-4: #006c84;
+  --nivel-0: var(--grafito-300); /* sin valorar */
+
+  /* Estados */
+  --error: #c0392b;
+  --error-tenue: #fdf0ee;
+  --exito: #0f6b47;
+  --exito-tenue: #eaf5f0;
+
+  /* Espaciado */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Radios */
+  --radio-sm: 4px;
+  --radio-md: 8px;
+  --radio-lg: 12px;
+
+  /* Sombras — mínimas: la jerarquía la da el borde, no la elevación */
+  --sombra-sm: 0 1px 2px rgba(17, 24, 32, 0.06);
+  --sombra-md: 0 2px 8px rgba(17, 24, 32, 0.08);
+  --sombra-lg: 0 8px 24px rgba(17, 24, 32, 0.12);
+
+  /* Tipografía */
+  --fuente-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* Movimiento */
+  --transicion: 180ms ease-out;
+
+  /* Layout */
+  --ancho-lectura: 68ch;
+  --ancho-contenido: 60rem;
+  --ancho-panel: 84rem;
+  --alto-toque: 44px;
+}
