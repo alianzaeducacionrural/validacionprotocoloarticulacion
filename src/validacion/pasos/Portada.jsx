@@ -1,4 +1,4 @@
-import { ArrowRight, ClockCounterClockwise, FloppyDisk } from '@phosphor-icons/react'
+import { ArrowRight, ClockCounterClockwise } from '@phosphor-icons/react'
 import { MarcaInstitucional } from '../../ui/MarcaInstitucional'
 import { Boton } from '../../ui/Boton'
 import { NIVELES } from '../../datos/escala'
@@ -50,28 +50,6 @@ export function Portada({ onComenzar, borradorDisponible, onContinuar }) {
               <span className={estilos.nivelEtiqueta}>{nivel.etiqueta}</span>
             </li>
           ))}
-        </ul>
-      </section>
-
-      <section className={estilos.seccion} aria-labelledby="titulo-antes">
-        <h2 id="titulo-antes" className={estilos.tituloSeccion}>
-          Antes de empezar
-        </h2>
-        <ul className={estilos.notas}>
-          <li>
-            <FloppyDisk size={18} weight="regular" aria-hidden="true" />
-            <span>
-              Tus respuestas se guardan solas en este dispositivo a medida que escribes. Puedes
-              cerrar y volver después.
-            </span>
-          </li>
-          <li>
-            <ClockCounterClockwise size={18} weight="regular" aria-hidden="true" />
-            <span>
-              Toma entre 40 y 60 minutos si comentas con detalle. Solo la valoración de 1 a 4 es
-              obligatoria; las observaciones son opcionales.
-            </span>
-          </li>
         </ul>
       </section>
 
