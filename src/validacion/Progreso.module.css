@@ -2,8 +2,8 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--fondo);
-  border-bottom: 1px solid var(--borde);
+  background: var(--acento-tenue);
+  border-bottom: 1px solid var(--acento-lavado);
 }
 
 .interior {
@@ -43,13 +43,14 @@
 }
 
 .barra {
-  height: 3px;
-  background: var(--borde);
+  height: 4px;
+  background: var(--acento-lavado);
+  border-radius: var(--radio-sm);
   overflow: hidden;
 }
 
 .relleno {
   height: 100%;
-  background: var(--acento);
+  background: linear-gradient(90deg, var(--acento) 0%, var(--acento-vivo) 100%);
   transition: width var(--transicion);
 }

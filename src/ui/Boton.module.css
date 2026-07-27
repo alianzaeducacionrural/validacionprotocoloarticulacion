@@ -28,6 +28,7 @@
 
 .primario:hover:not(:disabled) {
   background: var(--acento-oscuro);
+  box-shadow: var(--sombra-acento);
 }
 
 .secundario {

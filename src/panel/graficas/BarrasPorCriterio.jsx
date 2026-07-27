@@ -8,21 +8,23 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts'
-import { hexDePromedio, VALOR_MAXIMO } from '../../datos/escala'
+import { VALOR_MAXIMO } from '../../datos/escala'
+import { calcularExtremos, colorDeBarra } from './coloresBarra'
 
 /**
- * Promedio por criterio, ordenado de menor a mayor: lo más urgente arriba.
+ * Promedio por criterio, en el mismo orden en que aparecen en el formulario
+ * (el backend ya entrega `criterios` ordenado por criterio_id).
  *
  * Accesibilidad: la etiqueta de valor va siempre visible (no solo en tooltip)
  * y la tabla equivalente se ofrece más abajo en la vista, además del CSV.
  */
 export function BarrasPorCriterio({ criterios }) {
-  const datos = [...criterios]
-    .sort((a, b) => a.promedio - b.promedio)
-    .map((criterio) => ({
-      nombre: criterio.criterio,
-      promedio: Number(criterio.promedio.toFixed(2)),
-    }))
+  const datos = criterios.map((criterio) => ({
+    nombre: criterio.criterio,
+    promedio: Number(criterio.promedio.toFixed(2)),
+  }))
+
+  const extremos = calcularExtremos(datos.map((dato) => dato.promedio))
 
   // 34px por barra: suficiente para que la etiqueta del eje no se corte.
   const alto = Math.max(datos.length * 34 + 32, 200)
@@ -51,7 +53,7 @@ export function BarrasPorCriterio({ criterios }) {
           />
           <Bar dataKey="promedio" radius={[0, 4, 4, 0]} barSize={18} isAnimationActive={false}>
             {datos.map((entrada) => (
-              <Cell key={entrada.nombre} fill={hexDePromedio(entrada.promedio)} />
+              <Cell key={entrada.nombre} fill={colorDeBarra(entrada.promedio, extremos)} />
             ))}
             <LabelList
               dataKey="promedio"

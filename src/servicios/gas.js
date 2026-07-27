@@ -5,7 +5,7 @@
  * Apps Script no responde peticiones preflight de CORS (OPTIONS). Un
  * `Content-Type: application/json` las dispara y la petición falla. Por eso el
  * envío va como `text/plain` aunque el cuerpo sea JSON serializado; el backend
- * lo parsea igual con JSON.parse(e.postData.contents).
+ * lo parsea igual leyendo el blob del POST en UTF-8 (ver doPost en Codigo.gs).
  */
 
 const URL_GAS = import.meta.env.VITE_GAS_URL

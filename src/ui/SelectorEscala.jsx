@@ -70,7 +70,7 @@ export function SelectorEscala({ etiqueta, valor, onChange, error = false, descr
             tabIndex={seleccionado || (indiceActual === -1 && indice === 0) ? 0 : -1}
             onClick={() => onChange(nivel.valor)}
             className={`${estilos.opcion} ${seleccionado ? estilos.activa : ''}`}
-            style={seleccionado ? { '--color-nivel': nivel.color } : undefined}
+            style={{ '--color-nivel': nivel.color }}
           >
             <span className={estilos.numero} aria-hidden="true">
               {nivel.valor}

@@ -25,6 +25,7 @@
     margin-bottom: var(--space-xl);
     background: var(--fondo);
     border: 1px solid var(--borde);
+    border-top: 4px solid var(--acento);
     border-radius: var(--radio-lg);
     box-shadow: var(--sombra-md);
     padding-left: var(--space-2xl);
@@ -40,8 +41,8 @@
   position: fixed;
   inset: auto 0 0 0;
   z-index: 20;
-  background: var(--fondo);
-  border-top: 1px solid var(--borde);
+  background: var(--acento-tenue);
+  border-top: 1px solid var(--acento-lavado);
   /* Respeta la barra de gestos en iOS */
   padding-bottom: env(safe-area-inset-bottom);
 }

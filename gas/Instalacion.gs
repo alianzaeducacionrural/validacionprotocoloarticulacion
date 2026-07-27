@@ -108,42 +108,174 @@ function verificarInstalacion() {
     return;
   }
 
-  // Prueba real de extremo a extremo: genera un acta de muestra y la borra.
+  // Prueba real de extremo a extremo: pasa por guardarValidacion() con las
+  // 29 filas (no solo generarPdf() aislado), para que quede atrapado el
+  // mismo tipo de bug que ya se coló una vez: el auto-formato de fecha de
+  // Sheets sobre aspecto_id y la codificación UTF-8 del POST. Al final borra
+  // todo lo que creó — no es una validación real.
   try {
-    var muestra = generarPdf(
-      'PRUEBA-INSTALACION',
-      {
+    var resultado = guardarValidacion({
+      identificacion: {
         version_documento: 'Versión de prueba',
         fecha_validacion: Utilities.formatDate(new Date(), 'America/Bogota', 'yyyy-MM-dd'),
         validador_nombre: 'Prueba de instalación',
         validador_entidad: 'Comité de Cafeteros de Caldas',
         validador_cargo: 'Verificación técnica',
       },
-      { fortalezas: 'Documento de prueba generado por verificarInstalacion().' },
-      [
-        {
-          criterio_id: 1,
-          criterio: 'Coherencia conceptual',
-          aspecto_id: '1.1',
-          aspecto: 'El documento desarrolla claramente el propósito del protocolo.',
-          valoracion: 4,
-          observaciones: 'Prueba',
-          ajustes_requeridos: '',
-          responsable: '',
-        },
-      ],
-      4
-    );
+      consolidado: { fortalezas: 'Registro de prueba generado por verificarInstalacion().' },
+      valoraciones: generarValoracionesDePrueba_(),
+    });
 
-    DriveApp.getFileById(muestra.fileId).setTrashed(true);
+    if (!resultado.ok) {
+      informar_('✗ La escritura de prueba falló:\n\n' + resultado.error);
+      return;
+    }
+
+    var guardado = obtenerRespuesta(resultado.id);
+    var idsRotos = guardado.valoraciones.filter(function (v) {
+      return typeof v.aspecto_id !== 'string' || v.aspecto_id.indexOf('.') === -1;
+    });
+    var acentosRotos = guardado.valoraciones.some(function (v) {
+      return v.observaciones && v.observaciones.indexOf('Ã') !== -1;
+    });
+
+    eliminarValidacionDePrueba_(resultado.id);
+    if (resultado.pdf_file_id) DriveApp.getFileById(resultado.pdf_file_id).setTrashed(true);
+
+    if (idsRotos.length > 0) {
+      informar_(
+        '✗ ' + idsRotos.length + ' aspecto_id volvieron corruptos (Sheets los leyó como fecha).\n' +
+          'Revisa que guardarValidacion() siga fijando la columna con setNumberFormat(\'@\')\n' +
+          'antes de escribir (ver GAS.md, «aspecto_id y el auto-formato de fecha de Sheets»).'
+      );
+      return;
+    }
+
+    if (acentosRotos) {
+      informar_(
+        '✗ Los acentos llegaron corruptos ("Ã" en vez de una vocal con tilde).\n' +
+          'Revisa que doPost() siga usando e.postData.getDataAsString(\'UTF-8\')\n' +
+          '(ver GAS.md, «Codificación UTF-8 del POST»).'
+      );
+      return;
+    }
 
     informar_(
-      '✓ Instalación correcta.\n\nSe generó un acta de prueba y se envió a la papelera.\n' +
-        'Ya puedes desplegar la Web App y conectar el formulario.'
+      '✓ Instalación correcta.\n\nSe guardó, se releyó y se borró una validación de prueba ' +
+        'completa (29 aspectos, con acentos y un PDF real). Ya puedes conectar el formulario.'
     );
   } catch (err) {
-    informar_('✗ La generación del PDF falló:\n\n' + err);
+    informar_('✗ La prueba de guardado falló:\n\n' + err);
   }
+}
+
+/** 29 valoraciones de prueba con la misma forma que envía el formulario real. */
+function generarValoracionesDePrueba_() {
+  // Aspectos por criterio de la matriz real (ver src/datos/matriz.js): 3, 4,
+  // 3, 3, 3, 3, 3, 2, 3, 2 — suma 29. El texto es de relleno; lo único que
+  // importa para esta prueba es la FORMA del aspecto_id ("1.1", "10.2"…).
+  var conteoPorCriterio = [3, 4, 3, 3, 3, 3, 3, 2, 3, 2];
+  var valoraciones = [];
+
+  conteoPorCriterio.forEach(function (cantidad, indice) {
+    var criterioId = indice + 1;
+    for (var i = 1; i <= cantidad; i++) {
+      valoraciones.push({
+        criterio_id: criterioId,
+        criterio: 'Criterio de prueba ' + criterioId,
+        aspecto_id: criterioId + '.' + i,
+        aspecto: 'Aspecto de prueba ' + criterioId + '.' + i,
+        valoracion: 4,
+        // Acentos y ñ a propósito: si el POST llega mal decodificado, aquí
+        // se nota ("áéíóúñ" se corrompería a "Ã¡Ã©Ã­Ã³ÃºÃ±").
+        observaciones: i === 1 ? 'Prueba de codificación: áéíóúñ' : '',
+        ajustes_requeridos: '',
+        responsable: '',
+      });
+    }
+  });
+
+  return valoraciones;
+}
+
+/** Borra una validación de prueba: su fila en `respuestas` y sus filas en `valoraciones`. */
+function eliminarValidacionDePrueba_(id) {
+  var ss = hoja_();
+
+  var hojaRespuestas = ss.getSheetByName(HOJAS.RESPUESTAS);
+  var filaRespuesta = buscarFilaPorId_(hojaRespuestas, 'id', id, ENCABEZADOS_RESPUESTAS);
+  if (filaRespuesta > 0) hojaRespuestas.deleteRow(filaRespuesta);
+
+  var hojaValoraciones = ss.getSheetByName(HOJAS.VALORACIONES);
+  var columnaIdRespuesta = ENCABEZADOS_VALORACIONES.indexOf('id_respuesta') + 1;
+  var ids = hojaValoraciones
+    .getRange(2, columnaIdRespuesta, Math.max(hojaValoraciones.getLastRow() - 1, 0), 1)
+    .getValues();
+
+  // De abajo hacia arriba: borrar una fila no debe correr los índices de las
+  // que faltan por revisar.
+  for (var i = ids.length - 1; i >= 0; i--) {
+    if (String(ids[i][0]) === String(id)) {
+      hojaValoraciones.deleteRow(i + 2);
+    }
+  }
+}
+
+/** Fila (1-index) donde `encabezados[columna]` === id, o -1 si no está. */
+function buscarFilaPorId_(hoja, columna, id, encabezados) {
+  var indiceColumna = encabezados.indexOf(columna) + 1;
+  var ultimaFila = hoja.getLastRow();
+  if (ultimaFila < 2) return -1;
+
+  var valores = hoja.getRange(2, indiceColumna, ultimaFila - 1, 1).getValues();
+  for (var i = 0; i < valores.length; i++) {
+    if (String(valores[i][0]) === String(id)) return i + 2;
+  }
+  return -1;
+}
+
+/**
+ * Repara los `aspecto_id` de la hoja `valoraciones` que Sheets convirtió en
+ * fecha antes de que `guardarValidacion()` empezara a fijar la columna como
+ * texto (ver Codigo.gs). Afectó a todo lo guardado hasta ahora: "1.1", "2.4"…
+ * se leían como día.mes ("2.4" → 2 de abril) y Sheets los reemplazó por una
+ * fecha real, perdiendo el id original.
+ *
+ * La reconstrucción es exacta: día = getDate(), mes = getMonth()+1 — es
+ * exactamente la operación inversa de cómo Sheets hizo la conversión. Es
+ * seguro ejecutarla varias veces: las filas que ya son texto se dejan igual.
+ */
+function repararAspectoIdCorruptos() {
+  var hoja = hoja_().getSheetByName(HOJAS.VALORACIONES);
+  if (!hoja || hoja.getLastRow() < 2) {
+    informar_('No hay filas en «valoraciones» para revisar.');
+    return;
+  }
+
+  var columnaAspectoId = ENCABEZADOS_VALORACIONES.indexOf('aspecto_id') + 1;
+  var totalFilas = hoja.getLastRow() - 1;
+  var rango = hoja.getRange(2, columnaAspectoId, totalFilas, 1);
+  var valores = rango.getValues();
+
+  var reparadas = 0;
+  var nuevos = valores.map(function (fila) {
+    var valor = fila[0];
+    if (valor instanceof Date) {
+      reparadas++;
+      return [valor.getDate() + '.' + (valor.getMonth() + 1)];
+    }
+    return [valor];
+  });
+
+  rango.setNumberFormat('@');
+  rango.setValues(nuevos);
+
+  informar_(
+    reparadas > 0
+      ? '✓ Se repararon ' + reparadas + ' de ' + totalFilas + ' filas. ' +
+          'La columna quedó fijada como texto para que no vuelva a pasar.'
+      : 'No se encontraron aspecto_id corruptos: ya estaban en texto.'
+  );
 }
 
 /**
@@ -160,6 +292,7 @@ function onOpen() {
       .addItem('Verificar instalación', 'verificarInstalacion')
       .addSeparator()
       .addItem('Generar PDF faltantes', 'regenerarPdfsFaltantes')
+      .addItem('Reparar aspecto_id corruptos', 'repararAspectoIdCorruptos')
       .addItem('Limpiar caché de logos', 'limpiarCacheLogos')
       .addToUi();
   } catch (err) {

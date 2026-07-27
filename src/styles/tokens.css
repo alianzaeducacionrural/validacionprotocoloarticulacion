@@ -13,11 +13,13 @@
   /* Acento */
   --teal-700: #00505f;
   --teal-600: #006c84;
+  --teal-400: #12879c; /* vivo — insignias, degradados, hover con más energía */
+  --teal-150: #cdeaf0; /* lavado marcado — fondos de tarjeta y sección */
   --teal-050: #e6f2f5;
 
   /* Semánticos */
   --fondo: #ffffff;
-  --superficie: var(--grafito-050);
+  --superficie: #e9f2f3; /* tinte teal en vez de gris plano: menos "blanco" en toda la app */
   --tinta: var(--grafito-700);
   --tinta-fuerte: var(--grafito-900);
   --tinta-suave: var(--grafito-500);
@@ -25,8 +27,10 @@
   --borde: var(--grafito-100);
   --borde-fuerte: var(--grafito-300);
   --acento: var(--teal-600);
+  --acento-vivo: var(--teal-400);
   --acento-oscuro: var(--teal-700);
   --acento-tenue: var(--teal-050);
+  --acento-lavado: var(--teal-150);
 
   /* Escala de valoración — todos ≥ 4.5:1 sobre blanco */
   --nivel-1: #c0392b;
@@ -59,6 +63,7 @@
   --sombra-sm: 0 1px 2px rgba(17, 24, 32, 0.06);
   --sombra-md: 0 2px 8px rgba(17, 24, 32, 0.08);
   --sombra-lg: 0 8px 24px rgba(17, 24, 32, 0.12);
+  --sombra-acento: 0 4px 14px rgba(0, 108, 132, 0.22);
 
   /* Tipografía */
   --fuente-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;

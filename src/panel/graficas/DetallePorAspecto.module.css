@@ -1,0 +1,53 @@
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.pestana {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--fondo);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: 999px;
+  font-family: var(--fuente-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion);
+}
+
+.pestana:hover {
+  border-color: var(--acento);
+  color: var(--tinta);
+}
+
+.pestanaActiva,
+.pestanaActiva:hover {
+  background: var(--acento);
+  border-color: var(--acento);
+  color: #fff;
+}
+
+.nombreCriterio {
+  margin-top: var(--space-sm);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--tinta-fuerte);
+}
+
+.sinDatos {
+  padding: var(--space-md) 0;
+  font-size: 0.875rem;
+  color: var(--tinta-tenue);
+}

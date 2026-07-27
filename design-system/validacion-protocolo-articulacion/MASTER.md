@@ -17,10 +17,14 @@
 
 ---
 
-## Paleta — Grafito + teal técnico
+## Paleta — Grafito + teal técnico, con el teal como color estructural
 
-Neutro casi por completo. El color solo aparece en la escala de valoración y en los estados,
-para que los datos manden sobre la decoración.
+Sigue siendo grafito + teal, sin colores ajenos a esa familia — pero el teal dejó de vivir
+solo en la escala de valoración. Las tarjetas se mantienen en blanco: el color se concentra en
+la franja izquierda de acento, las insignias de índice, el degradado de la barra de progreso
+y el propio selector 1–4 (cada nivel se tiñe con su color incluso sin seleccionar). Se probó un
+lavado de color de fondo completo en las tarjetas y se descartó — se sentía pesado en un
+formulario tan largo.
 
 | Rol | Hex | Variable |
 |---|---|---|
@@ -29,11 +33,13 @@ para que los datos manden sobre la decoración.
 | Texto secundario | `#52606D` | `--grafito-500` |
 | Texto deshabilitado | `#9AA5B1` | `--grafito-300` |
 | Borde | `#D9DDE3` | `--borde` |
-| Superficie | `#F4F5F7` | `--superficie` |
-| Fondo | `#FFFFFF` | `--fondo` |
+| Superficie (body, con tinte teal) | `#E9F2F3` | `--superficie` |
+| Fondo (tarjetas y campos de texto) | `#FFFFFF` | `--fondo` |
 | Acento | `#006C84` | `--teal-600` |
+| Acento vivo (insignias, degradados) | `#12879C` | `--teal-400` |
 | Acento oscuro (hover) | `#00505F` | `--teal-700` |
-| Acento tenue (fondo) | `#E6F2F5` | `--teal-050` |
+| Acento tenue (fondo de barras/paneles) | `#E6F2F5` | `--teal-050` |
+| Acento lavado (riel de la barra de progreso, bordes finos) | `#CDEAF0` | `--teal-150` |
 
 ### Escala de valoración — contraste verificado sobre blanco
 

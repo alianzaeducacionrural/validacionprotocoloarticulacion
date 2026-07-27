@@ -26,13 +26,13 @@
   max-width: var(--ancho-lectura);
 }
 
-/* Agrupaciones de campos — la franja superior de color y el icono son lo
-   que rompe la monotonía gris cuando hay varias tarjetas seguidas. */
+/* Agrupaciones de campos — la franja izquierda de color es lo que rompe la
+   monotonía blanca cuando hay varias tarjetas seguidas. */
 .grupo {
   padding: var(--space-lg) var(--space-md) var(--space-md);
   background: var(--fondo);
   border: 1px solid var(--borde);
-  border-top: 3px solid var(--acento);
+  border-left: 4px solid var(--acento);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra-sm);
 }

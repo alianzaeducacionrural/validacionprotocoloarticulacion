@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { Plus, Minus } from '@phosphor-icons/react'
 import { SelectorEscala } from '../../ui/SelectorEscala'
 import { AreaTexto, Campo } from '../../ui/Campo'
 import estilos from './Criterio.module.css'
@@ -19,13 +17,6 @@ const CAMPOS_DETALLE = [
 
 /** Una fila de la matriz: el aspecto, su valoración y sus campos de detalle. */
 function Aspecto({ aspecto, indice, datos = {}, onCambio, pendiente, refPrimerPendiente }) {
-  const tieneContenido =
-    Boolean(datos.observaciones) || Boolean(datos.ajustes_requeridos) || Boolean(datos.responsable)
-
-  // Progressive disclosure: los campos de texto arrancan plegados y solo se
-  // despliegan si el validador los pide o si ya traen contenido guardado.
-  const [abierto, setAbierto] = useState(tieneContenido)
-
   const idAviso = `aviso-${aspecto.id}`
 
   return (
@@ -57,44 +48,24 @@ function Aspecto({ aspecto, indice, datos = {}, onCambio, pendiente, refPrimerPe
         </p>
       )}
 
-      <button
-        type="button"
-        className={estilos.alternador}
-        onClick={() => setAbierto((previo) => !previo)}
-        aria-expanded={abierto}
-        aria-controls={`detalle-${aspecto.id}`}
-      >
-        {abierto ? (
-          <Minus size={14} weight="bold" aria-hidden="true" />
-        ) : (
-          <Plus size={14} weight="bold" aria-hidden="true" />
-        )}
-        <span>
-          {abierto ? 'Ocultar observaciones' : 'Agregar observaciones'}
-          {!abierto && tieneContenido && <span className={estilos.marca}> · con contenido</span>}
-        </span>
-      </button>
-
-      {abierto && (
-        <div className={estilos.detalle} id={`detalle-${aspecto.id}`}>
-          {CAMPOS_DETALLE.map((campo) => (
-            <AreaTexto
-              key={campo.clave}
-              etiqueta={campo.etiqueta}
-              ayuda={campo.ayuda}
-              filas={2}
-              valor={datos[campo.clave]}
-              onChange={(valor) => onCambio(aspecto.id, campo.clave, valor)}
-            />
-          ))}
-          <Campo
-            etiqueta="Responsable"
-            ayuda="Quién debe realizar el ajuste."
-            valor={datos.responsable}
-            onChange={(valor) => onCambio(aspecto.id, 'responsable', valor)}
+      <div className={estilos.detalle} id={`detalle-${aspecto.id}`}>
+        {CAMPOS_DETALLE.map((campo) => (
+          <AreaTexto
+            key={campo.clave}
+            etiqueta={campo.etiqueta}
+            ayuda={campo.ayuda}
+            filas={2}
+            valor={datos[campo.clave]}
+            onChange={(valor) => onCambio(aspecto.id, campo.clave, valor)}
           />
-        </div>
-      )}
+        ))}
+        <Campo
+          etiqueta="Responsable"
+          ayuda="Quién debe realizar el ajuste."
+          valor={datos.responsable}
+          onChange={(valor) => onCambio(aspecto.id, 'responsable', valor)}
+        />
+      </div>
     </li>
   )
 }

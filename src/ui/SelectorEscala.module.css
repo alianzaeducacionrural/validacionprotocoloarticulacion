@@ -18,10 +18,15 @@
   gap: 2px;
   min-height: var(--alto-toque);
   padding: var(--space-sm) var(--space-xs);
+  /* Cada opción ya se tiñe con el color de su propio nivel, aunque no esté
+     seleccionada: la escala 1–4 es donde el sistema permite color, y aquí
+     se usa a fondo para que las 29 filas del formulario no se vean planas. */
   background: var(--fondo);
+  background: color-mix(in srgb, var(--color-nivel) 10%, white);
   border: 1px solid var(--borde-fuerte);
+  border: 1px solid color-mix(in srgb, var(--color-nivel) 40%, white);
   border-radius: var(--radio-md);
-  color: var(--tinta-suave);
+  color: var(--tinta);
   transition:
     background-color var(--transicion),
     border-color var(--transicion),
@@ -29,9 +34,9 @@
 }
 
 .opcion:hover:not(.activa) {
-  border-color: var(--acento);
-  background: var(--acento-tenue);
-  color: var(--tinta);
+  border-color: var(--color-nivel);
+  background: color-mix(in srgb, var(--color-nivel) 20%, white);
+  color: var(--tinta-fuerte);
 }
 
 .numero {

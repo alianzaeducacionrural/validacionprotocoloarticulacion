@@ -51,8 +51,11 @@
   padding: var(--space-md);
   background: var(--fondo);
   border: 1px solid var(--borde);
+  border-left: 4px solid var(--acento);
   border-radius: var(--radio-lg);
-  transition: border-color var(--transicion);
+  transition:
+    border-color var(--transicion),
+    background-color var(--transicion);
 }
 
 .aspecto:focus-visible {
@@ -62,21 +65,31 @@
 
 .pendiente {
   border-color: var(--error);
+  border-left-color: var(--error);
   background: var(--error-tenue);
 }
 
 .enunciado {
   display: flex;
+  align-items: flex-start;
   gap: var(--space-sm);
 }
 
+/* Insignia rellena en vez de número gris: ancla visual de cada fila. */
 .indice {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 1.625rem;
+  padding: 0 var(--space-xs);
+  background: var(--acento);
+  color: #fff;
   font-family: var(--fuente-mono);
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--tinta-tenue);
-  padding-top: 2px;
+  font-weight: 700;
+  border-radius: var(--radio-sm);
 }
 
 .texto {
@@ -90,32 +103,6 @@
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--error);
-}
-
-.alternador {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-xs);
-  align-self: flex-start;
-  min-height: 2rem;
-  padding: var(--space-xs) var(--space-sm);
-  margin-left: calc(var(--space-sm) * -1);
-  background: transparent;
-  border: none;
-  border-radius: var(--radio-sm);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--acento);
-  transition: background-color var(--transicion);
-}
-
-.alternador:hover {
-  background: var(--acento-tenue);
-}
-
-.marca {
-  color: var(--tinta-suave);
-  font-weight: 400;
 }
 
 .detalle {
@@ -134,7 +121,6 @@
     grid-template-areas:
       'enunciado selector'
       'enunciado aviso'
-      'alternador alternador'
       'detalle detalle';
     column-gap: var(--space-lg);
     align-items: start;
@@ -148,9 +134,6 @@
   }
   .aviso {
     grid-area: aviso;
-  }
-  .alternador {
-    grid-area: alternador;
   }
   .detalle {
     grid-area: detalle;

@@ -95,7 +95,11 @@ Definido en
 [design-system/validacion-protocolo-articulacion/MASTER.md](design-system/validacion-protocolo-articulacion/MASTER.md).
 Léelo antes de tocar cualquier cosa visual. Lo esencial:
 
-- **Grafito + teal.** El color solo aparece en la escala 1–4 y en los estados.
+- **Grafito + teal**, pero el teal ya no vive solo en la escala: también es
+  franja izquierda de acento, insignias de índice y degradado de la barra de
+  progreso. Las tarjetas se mantienen en blanco (`--fondo`) — se probó un
+  lavado de color de fondo completo y se descartó por sentirse pesado en un
+  formulario largo.
 - **La escala nunca comunica solo por color:** siempre número + etiqueta. Los
   cuatro hex están verificados ≥ 4.5:1 sobre blanco; si cambias uno, recalcula.
 - IBM Plex Sans (interfaz) + IBM Plex Mono (cifras), auto-hospedadas. Sin CDN.

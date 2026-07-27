@@ -104,7 +104,13 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    var datos = JSON.parse(e.postData.contents);
+    // e.postData.contents decodifica los bytes como Latin-1, no como UTF-8:
+    // los acentos y la ñ llegan corruptos ("María" → "MarÃ­a"). e.postData no
+    // tiene .getBlob() (no es un Blob real, pese a lo que sugieren varios
+    // ejemplos en internet) — pero sí expone .getDataAsString(charset)
+    // directamente, que es el método soportado para pedir la decodificación.
+    var textoCrudo = e.postData.getDataAsString('UTF-8');
+    var datos = JSON.parse(textoCrudo);
 
     if (datos.accion === 'regenerar_pdf') {
       return responder(regenerarPdfDeRespuesta(datos.id));
@@ -186,8 +192,16 @@ function guardarValidacion(datos) {
     ];
   });
 
+  var filaInicio = hojaValoraciones.getLastRow() + 1;
+  var columnaAspectoId = ENCABEZADOS_VALORACIONES.indexOf('aspecto_id') + 1;
+
+  // "1.1", "2.4"... se leen como día.mes: sin forzar texto, Sheets las
+  // reinterpreta como fechas reales (p. ej. "2.4" → 2 de abril) y el id se
+  // pierde. Hay que fijar el formato ANTES de escribir.
+  hojaValoraciones.getRange(filaInicio, columnaAspectoId, filas.length, 1).setNumberFormat('@');
+
   hojaValoraciones
-    .getRange(hojaValoraciones.getLastRow() + 1, 1, filas.length, ENCABEZADOS_VALORACIONES.length)
+    .getRange(filaInicio, 1, filas.length, ENCABEZADOS_VALORACIONES.length)
     .setValues(filas);
 
   var resultado = { ok: true, id: id, promedio_general: promedio };

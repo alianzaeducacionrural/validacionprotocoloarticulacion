@@ -94,6 +94,20 @@
   border-top: 1px solid var(--borde);
 }
 
+.criticoRango {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--superficie);
+  font-family: var(--fuente-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
 .criticoPromedio {
   display: grid;
   place-items: center;
@@ -113,11 +127,6 @@
 
 .criticoCriterio {
   font-size: 0.8125rem;
-  color: var(--tinta-suave);
-}
-
-.sinCriticos {
-  font-size: 0.875rem;
   color: var(--tinta-suave);
 }
 

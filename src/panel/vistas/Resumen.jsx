@@ -1,11 +1,12 @@
-import { Link } from 'react-router-dom'
 import { Warning } from '@phosphor-icons/react'
 import { Cargando, EstadoVacio, Alerta } from '../../ui/Estados'
 import { BarrasPorCriterio } from '../graficas/BarrasPorCriterio'
-import { DistribucionEscala } from '../graficas/DistribucionEscala'
+import { DetallePorAspecto } from '../graficas/DetallePorAspecto'
 import { formatearPromedio, colorDePromedio, UMBRAL_CRITICO } from '../../datos/escala'
-import { TOTAL_ASPECTOS } from '../../datos/matriz'
+import { CRITERIOS, TOTAL_ASPECTOS } from '../../datos/matriz'
 import estilos from './Vista.module.css'
+
+const TOP_CRITICOS = 10
 
 export function Resumen({ resumen, cargando, error }) {
   if (cargando) return <Cargando mensaje="Cargando el consolidado…" />
@@ -23,6 +24,11 @@ export function Resumen({ resumen, cargando, error }) {
   const criticos = resumen.aspectos
     .filter((aspecto) => aspecto.conteo > 0 && aspecto.promedio < UMBRAL_CRITICO)
     .sort((a, b) => a.promedio - b.promedio)
+
+  const topCriticos = [...resumen.aspectos]
+    .filter((aspecto) => aspecto.conteo > 0)
+    .sort((a, b) => a.promedio - b.promedio)
+    .slice(0, TOP_CRITICOS)
 
   return (
     <div className={estilos.vista}>
@@ -61,23 +67,21 @@ export function Resumen({ resumen, cargando, error }) {
           Promedio por criterio
         </h2>
         <p className={estilos.subtituloTarjeta}>
-          Ordenado de menor a mayor: lo que más atención necesita aparece primero.
+          En el orden del formulario. En verde el de mejor promedio, en rojo el que más atención
+          necesita.
         </p>
         <BarrasPorCriterio criterios={resumen.criterios} />
       </section>
 
-      <section className={estilos.tarjeta} aria-labelledby="titulo-distribucion">
-        <h2 id="titulo-distribucion" className={estilos.tituloTarjeta}>
-          Distribución de las valoraciones
+      <section className={estilos.tarjeta} aria-labelledby="titulo-detalle">
+        <h2 id="titulo-detalle" className={estilos.tituloTarjeta}>
+          Detalle por aspecto
         </h2>
         <p className={estilos.subtituloTarjeta}>
-          Cómo se repartieron las {resumen.total * TOTAL_ASPECTOS} valoraciones entre los cuatro
-          niveles de la escala.
+          Promedio de cada aspecto dentro del criterio seleccionado, a través de todas las
+          respuestas.
         </p>
-        <DistribucionEscala
-          distribucion={resumen.distribucion}
-          total={resumen.total * TOTAL_ASPECTOS}
-        />
+        <DetallePorAspecto criterios={CRITERIOS} aspectos={resumen.aspectos} />
       </section>
 
       <section className={estilos.tarjeta} aria-labelledby="titulo-criticos">
@@ -85,35 +89,31 @@ export function Resumen({ resumen, cargando, error }) {
           <Warning size={18} weight="regular" aria-hidden="true" /> Aspectos críticos
         </h2>
         <p className={estilos.subtituloTarjeta}>
-          Aspectos cuyo promedio quedó por debajo de {UMBRAL_CRITICO}. Son los ajustes que el
-          protocolo necesita con prioridad.
+          Los {TOP_CRITICOS} aspectos con menor promedio, de todos los criterios. El 1 es el más
+          crítico.
         </p>
 
-        {criticos.length === 0 ? (
-          <p className={estilos.sinCriticos}>
-            Ningún aspecto quedó por debajo del umbral. Revisa la vista{' '}
-            <Link to="/admin/aspectos">Aspectos</Link> para el detalle completo.
-          </p>
-        ) : (
-          <ul className={estilos.listaCriticos}>
-            {criticos.map((aspecto) => (
-              <li key={aspecto.aspecto_id} className={estilos.critico}>
-                <span
-                  className={estilos.criticoPromedio}
-                  style={{ background: colorDePromedio(aspecto.promedio) }}
-                >
-                  {formatearPromedio(aspecto.promedio)}
-                </span>
-                <div>
-                  <p className={estilos.criticoTexto}>{aspecto.aspecto}</p>
-                  <p className={estilos.criticoCriterio}>
-                    {aspecto.aspecto_id} · {aspecto.criterio}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ol className={estilos.listaCriticos}>
+          {topCriticos.map((aspecto, indice) => (
+            <li key={aspecto.aspecto_id} className={estilos.critico}>
+              <span className={estilos.criticoRango} aria-hidden="true">
+                {indice + 1}
+              </span>
+              <span
+                className={estilos.criticoPromedio}
+                style={{ background: colorDePromedio(aspecto.promedio) }}
+              >
+                {formatearPromedio(aspecto.promedio)}
+              </span>
+              <div>
+                <p className={estilos.criticoTexto}>{aspecto.aspecto}</p>
+                <p className={estilos.criticoCriterio}>
+                  Criterio {aspecto.criterio_id} — {aspecto.criterio}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
     </div>
   )

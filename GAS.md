@@ -83,7 +83,7 @@ ejecución** (independiente).
 
 ### 4. Subir los logos
 
-Sube los tres PNG de la carpeta `Logos/` a la
+Sube los tres PNG de [`src/assets/logos/`](src/assets/logos/) a la
 [carpeta del proyecto](https://drive.google.com/drive/folders/1QJdHFH5xZMNMfk2ABnycAWfriImDzR0h)
 (no es obligatorio que queden ahí, pero mantiene todo junto). Para cada uno,
 clic derecho → **Compartir → Copiar vínculo**. El id es el tramo largo
@@ -99,11 +99,17 @@ En el editor de Apps Script: **Configuración del proyecto** (el engranaje) →
 
 | Propiedad | Valor |
 |---|---|
-| `LOGO_ALCALDIA_ID` | id de `3.png` (Alcaldía de Manizales) |
-| `LOGO_EVIDENCIA_ID` | id de `1.png` (Colombia Evidencia Potencial) |
-| `LOGO_COMITE_ID` | id de `2.png` (Comité de Cafeteros) |
+| `LOGO_ALCALDIA_ID` | id de `alcaldia-manizales.png` |
+| `LOGO_EVIDENCIA_ID` | id de `evidencia-potencial.png` |
+| `LOGO_COMITE_ID` | id de `comite-cafeteros.png` |
 
 Los logos deben quedar visibles para el script; como son tuyos, ya lo están.
+
+Estos mismos PNG también están incrustados en el frontend (portada del
+formulario, vía `ui/MarcaInstitucional.jsx`) — son la misma fuente, así que si
+reemplazas un logo actualiza el archivo en `src/assets/logos/` y repite la
+subida a Drive, y corre **Validación → Limpiar caché de logos** para que el
+backend relea el nuevo archivo.
 
 ### 5. Verificar
 
@@ -156,9 +162,42 @@ la URL cambia y hay que actualizarla en `.env` y en el secret de GitHub.
 El frontend envía `Content-Type: text/plain`, no `application/json`, aunque el
 cuerpo sea JSON. Apps Script no responde peticiones preflight de CORS y
 `application/json` las dispara, con lo que el envío falla desde el navegador.
-El backend lo parsea igual con `JSON.parse(e.postData.contents)`.
 
 **No cambies esto** en `src/servicios/gas.js` sin probar un envío real.
+
+### Codificación UTF-8 del POST
+
+`e.postData.contents` decodifica los bytes como Latin-1, no como UTF-8: los
+acentos y la ñ llegan corruptos ("María" se guarda como "MarÃ­a"). Se detectó
+enviando validaciones de prueba reales, no en el desarrollo local. `doPost` en
+`Codigo.gs` usa en cambio:
+
+```js
+var textoCrudo = e.postData.getDataAsString('UTF-8');
+var datos = JSON.parse(textoCrudo);
+```
+
+`e.postData` **no es un Blob** y no tiene `.getBlob()` — pese a que varios
+ejemplos en internet lo sugieren, eso lanza `e.postData.getBlob is not a
+function`. El método soportado para pedir la decodificación está directamente
+en `e.postData.getDataAsString(charset)`.
+
+**No vuelvas a `e.postData.contents` directo** — es la causa exacta de este bug.
+
+### aspecto_id y el auto-formato de fecha de Sheets
+
+Los ids de aspecto ("1.1", "2.4"…) tienen forma de fecha día.mes, y Sheets los
+reinterpreta como fecha real si la celda no está en formato texto — "2.4" se
+convierte en "2 de abril". Esto rompe el id en el 100% de los aspectos, no
+ocasionalmente: cualquier "D.M" con D≤10 y M≤4 es una fecha válida.
+
+`guardarValidacion()` fija la columna como texto (`setNumberFormat('@')`)
+**antes** de escribir, así que las validaciones nuevas quedan bien. Si tienes
+datos guardados antes de este fix (fechas donde debería haber un id), corre
+**Validación → Reparar aspecto_id corruptos**: reconstruye el id exacto a
+partir de la fecha (`día` + `.` + `mes`, que es la operación inversa de cómo
+Sheets hizo la conversión) y deja fija la columna en texto. Es seguro
+ejecutarla más de una vez.
 
 ### Escritura en bloque
 
@@ -260,3 +299,5 @@ Se rechaza si `valoraciones` no trae exactamente 29 elementos.
 | El PDF sale sin logos | Los ids apuntan a archivos que el script no puede leer. Corre **Verificar instalación**. |
 | El panel muestra «Pendiente» en el PDF | La generación falló en ese envío. Usa el botón «Generar el PDF» del detalle, o el menú **Generar PDF faltantes**. |
 | Acentos rotos en el CSV | Ábrelo con Excel, no con el Bloc de notas. El archivo lleva BOM UTF-8. |
+| Nombres con acentos guardados mal ("MarÃ­a") | Estás corriendo una versión del backend anterior al fix de codificación UTF-8. Publica versión nueva (ver «Publicar cambios del backend»); los datos ya guardados con el error no se recuperan solos. |
+| Los aspecto_id de `valoraciones` son fechas | El bug de auto-formato de Sheets — ver «aspecto_id y el auto-formato de fecha de Sheets» arriba. Corre **Validación → Reparar aspecto_id corruptos**. |
