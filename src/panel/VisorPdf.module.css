@@ -39,19 +39,3 @@
   border-color: var(--tinta-suave);
   background: var(--superficie);
 }
-
-.marco {
-  width: 100%;
-  height: min(75vh, 46rem);
-  border: 1px solid var(--borde);
-  border-radius: var(--radio-md);
-  background: var(--superficie);
-}
-
-.nota {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: 0.8125rem;
-  color: var(--tinta-suave);
-}

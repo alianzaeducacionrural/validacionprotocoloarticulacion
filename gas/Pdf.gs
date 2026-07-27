@@ -126,7 +126,19 @@ function generarPdf(id, identificacion, consolidado, valoraciones, promedio) {
 
   // El panel no tiene credenciales, así que el PDF debe ser legible por
   // cualquiera con el enlace. Queda advertido en el README.
-  archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  //
+  // Si esto falla (p. ej. cuota de Drive para compartir como público), el
+  // archivo YA quedó creado — no perdemos su id ni su url por eso. Es peor
+  // devolver undefined aquí: guardarDatosPdf() nunca se ejecutaría, la fila
+  // se queda sin enlace, y el próximo reintento crea OTRO archivo duplicado
+  // en vez de reutilizar este. Queda sin compartir hasta que se reintente
+  // (regenerarPdfsFaltantes() no lo tocaría porque ya tiene pdf_file_id;
+  // usa "Generar el PDF" del detalle en el panel para forzarlo de nuevo).
+  try {
+    archivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (err) {
+    console.error('No se pudo compartir el PDF de ' + id + ': ' + err);
+  }
 
   return { fileId: archivo.getId(), url: archivo.getUrl() };
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowSquareOut, DownloadSimple, ArrowClockwise, FilePdf } from '@phosphor-icons/react'
+import { DownloadSimple, ArrowClockwise } from '@phosphor-icons/react'
 import { Boton } from '../ui/Boton'
 import { Alerta } from '../ui/Estados'
 import { regenerarPdf } from '../servicios/gas'
@@ -8,11 +8,15 @@ import estilos from './VisorPdf.module.css'
 /**
  * Visor del acta en PDF.
  *
- * Drive expone /preview para incrustar y /uc?export=download para descargar.
- * Si la generación falló al llegar la respuesta, el PDF no existe todavía y
- * se ofrece regenerarlo sin tener que entrar al editor de Apps Script.
+ * Solo se ofrece descarga directa (/uc?export=download) — sin vista
+ * incrustada ni enlace a "Abrir en Drive": el archivo no siempre queda
+ * compartido como "cualquiera con el enlace" (falla intermitente de Drive al
+ * compartir, ver GAS.md), así que ambos podían pedir un acceso que quien
+ * mira el panel no tiene. Si la generación falló al llegar la respuesta, el
+ * PDF no existe todavía y se ofrece regenerarlo sin tener que entrar al
+ * editor de Apps Script.
  */
-export function VisorPdf({ respuestaId, fileId, url, onRegenerado }) {
+export function VisorPdf({ respuestaId, fileId, onRegenerado }) {
   const [regenerando, setRegenerando] = useState(false)
   const [error, setError] = useState(null)
 
@@ -63,30 +67,7 @@ export function VisorPdf({ respuestaId, fileId, url, onRegenerado }) {
           <DownloadSimple size={18} weight="regular" aria-hidden="true" />
           Descargar PDF
         </a>
-        <a
-          className={estilos.accion}
-          href={url ?? `https://drive.google.com/file/d/${fileId}/view`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ArrowSquareOut size={18} weight="regular" aria-hidden="true" />
-          Abrir en Drive
-          <span className="sr-only"> (se abre en una pestaña nueva)</span>
-        </a>
       </div>
-
-      <iframe
-        className={estilos.marco}
-        src={`https://drive.google.com/file/d/${fileId}/preview`}
-        title="Acta de validación en PDF"
-        loading="lazy"
-      />
-
-      <p className={estilos.nota}>
-        <FilePdf size={16} weight="regular" aria-hidden="true" />
-        Si el documento no carga, tu navegador está bloqueando el contenido incrustado de Drive. Usa
-        «Abrir en Drive».
-      </p>
     </div>
   )
 }

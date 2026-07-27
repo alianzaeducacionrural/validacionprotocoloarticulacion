@@ -125,7 +125,6 @@ export function Respuesta() {
         <VisorPdf
           respuestaId={respuesta.id}
           fileId={respuesta.pdf_file_id}
-          url={respuesta.pdf_url}
           onRegenerado={cargar}
         />
       </section>

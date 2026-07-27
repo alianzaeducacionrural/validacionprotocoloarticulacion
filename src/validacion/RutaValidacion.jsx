@@ -42,6 +42,7 @@ export function RutaValidacion() {
   const [enviando, setEnviando] = useState(false)
   const [errorEnvio, setErrorEnvio] = useState(null)
   const [enviado, setEnviado] = useState(false)
+  const [resultadoEnvio, setResultadoEnvio] = useState(null)
   const [borradorGuardado] = useState(() => leerBorrador())
 
   const principalRef = useRef(null)
@@ -124,8 +125,9 @@ export function RutaValidacion() {
     }
 
     try {
-      await enviarValidacion(payload)
+      const resultado = await enviarValidacion(payload)
       borrarBorrador()
+      setResultadoEnvio(resultado)
       setEnviado(true)
     } catch (error) {
       setErrorEnvio(error.message)
@@ -137,7 +139,10 @@ export function RutaValidacion() {
   if (enviado) {
     return (
       <main className={estilos.contenedorSimple}>
-        <Enviado nombre={datos.identificacion.validador_nombre.split(' ')[0]} />
+        <Enviado
+          nombre={datos.identificacion.validador_nombre.split(' ')[0]}
+          pdfFileId={resultadoEnvio?.pdf_file_id}
+        />
       </main>
     )
   }
