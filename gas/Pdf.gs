@@ -116,7 +116,7 @@ function generarPdf(id, identificacion, consolidado, valoraciones, promedio) {
     throw new Error('Falta la propiedad CARPETA_PDF_ID. Ejecuta crearEstructura() (ver GAS.md).');
   }
 
-  var html = construirHtmlActa(id, identificacion, consolidado, valoraciones, promedio);
+  var html = construirHtmlActa(identificacion, consolidado, valoraciones, promedio);
   var blob = Utilities.newBlob(html, 'text/html', 'acta.html').getAs('application/pdf');
 
   blob.setName(nombreArchivo(id, identificacion));
@@ -230,7 +230,7 @@ function escaparHtml(texto) {
     .replace(/"/g, '&quot;');
 }
 
-function construirHtmlActa(id, identificacion, consolidado, valoraciones, promedio) {
+function construirHtmlActa(identificacion, consolidado, valoraciones, promedio) {
   var imagenes = logos();
 
   // Agrupa las 29 valoraciones por criterio conservando el orden de llegada.
@@ -320,7 +320,6 @@ function construirHtmlActa(id, identificacion, consolidado, valoraciones, promed
     '.consolidadoItem { margin-bottom: 12px; padding: 8px 10px; border: 1px solid #D9DDE3; border-radius: 4px; }',
     '.consolidadoItem h3 { font-size: 9pt; margin: 0 0 4px; color: #00505F; }',
     '.consolidadoItem p { margin: 0; white-space: pre-wrap; }',
-    '.pie { margin-top: 18px; padding-top: 6px; border-top: 1px solid #D9DDE3; font-size: 7pt; color: #52606D; }',
     '</style></head><body>',
 
     '<div class="logos">',
@@ -352,10 +351,6 @@ function construirHtmlActa(id, identificacion, consolidado, valoraciones, promed
     '<h1>Consolidado de la validación</h1>',
     seccionesConsolidado,
     '</div>',
-
-    '<p class="pie">Acta generada automáticamente el ' +
-      Utilities.formatDate(new Date(), 'America/Bogota', "d 'de' MMMM 'de' yyyy 'a las' HH:mm") +
-      ' · Identificador de la validación: ' + escaparHtml(id) + '</p>',
 
     '</body></html>',
   ].join('');

@@ -197,8 +197,13 @@ function guardarValidacion(datos) {
 
   // "1.1", "2.4"... se leen como día.mes: sin forzar texto, Sheets las
   // reinterpreta como fechas reales (p. ej. "2.4" → 2 de abril) y el id se
-  // pierde. Hay que fijar el formato ANTES de escribir.
+  // pierde. Hay que fijar el formato ANTES de escribir, y el flush() es
+  // necesario: sin él, Apps Script puede agrupar (batchear) el cambio de
+  // formato y el setValues() de abajo, y el valor se guarda como si la
+  // celda siguiera en formato automático — se ve bien en la hoja pero
+  // getValues() lo sigue devolviendo como Date en cualquier lectura futura.
   hojaValoraciones.getRange(filaInicio, columnaAspectoId, filas.length, 1).setNumberFormat('@');
+  SpreadsheetApp.flush();
 
   hojaValoraciones
     .getRange(filaInicio, 1, filas.length, ENCABEZADOS_VALORACIONES.length)
@@ -449,6 +454,13 @@ function leerHoja(hoja) {
     encabezados.forEach(function (clave, indice) {
       objeto[clave] = fila[indice];
     });
+    // Defensa adicional al fix de guardarValidacion(): si por lo que sea
+    // Sheets igual devolvió el aspecto_id como fecha (ver GAS.md, "aspecto_id
+    // y el auto-formato de fecha de Sheets"), se reconstruye aquí antes de
+    // que llegue a cualquier consumidor — PDF, panel u obtenerRespuesta.
+    if (objeto.aspecto_id instanceof Date) {
+      objeto.aspecto_id = objeto.aspecto_id.getDate() + '.' + (objeto.aspecto_id.getMonth() + 1);
+    }
     return objeto;
   });
 }
