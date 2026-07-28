@@ -10,6 +10,7 @@ import { Identificacion } from './pasos/Identificacion'
 import { Criterio } from './pasos/Criterio'
 import { Consolidado } from './pasos/Consolidado'
 import { Enviado } from './pasos/Enviado'
+import { EnvioProgreso } from './EnvioProgreso'
 import { useBorrador, leerBorrador, borrarBorrador } from './useBorrador'
 import {
   validarIdentificacion,
@@ -134,6 +135,14 @@ export function RutaValidacion() {
     } finally {
       setEnviando(false)
     }
+  }
+
+  if (enviando) {
+    return (
+      <main className={estilos.contenedorSimple}>
+        <EnvioProgreso />
+      </main>
+    )
   }
 
   if (enviado) {

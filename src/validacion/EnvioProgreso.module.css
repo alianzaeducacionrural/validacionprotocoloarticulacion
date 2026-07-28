@@ -1,0 +1,159 @@
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+@media (min-width: 60rem) {
+  .contenedor {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-top: 4px solid var(--acento);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra-md);
+    padding-left: var(--space-2xl);
+    padding-right: var(--space-2xl);
+  }
+}
+
+.cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-xl) 0;
+}
+
+.pasos {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 24rem;
+  list-style: none;
+}
+
+.paso {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.linea {
+  position: absolute;
+  top: 1.5rem;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--borde-fuerte);
+  transition: background-color 400ms var(--transicion);
+}
+
+.lineaRecorrida {
+  background: var(--acento);
+}
+
+.circulo {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--fondo);
+  border: 2px solid var(--borde-fuerte);
+  color: var(--tinta-tenue);
+  transition:
+    border-color var(--transicion),
+    background-color var(--transicion),
+    color var(--transicion);
+}
+
+.circulo.activo {
+  border-color: var(--acento);
+  background: var(--acento-tenue);
+  color: var(--acento);
+  animation: respirar 1.6s ease-in-out infinite;
+}
+
+.circulo.activo::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--acento);
+  animation: pulso 1.6s ease-out infinite;
+}
+
+.circulo.completado {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: #fff;
+  animation: aparecer 300ms var(--transicion);
+}
+
+.etiqueta {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--tinta);
+  text-align: center;
+  max-width: 9rem;
+}
+
+.nota {
+  font-size: 0.8125rem;
+  color: var(--tinta-suave);
+}
+
+@keyframes respirar {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes pulso {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circulo.activo,
+  .circulo.completado {
+    animation: none;
+  }
+
+  .circulo.activo::after {
+    animation: none;
+    opacity: 0;
+  }
+}

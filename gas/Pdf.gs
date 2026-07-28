@@ -180,6 +180,19 @@ function regenerarPdfDeRespuesta(id) {
     Number(respuesta.promedio_general)
   );
 
+  // Cada regeneración crea un archivo nuevo en Drive; sin esto, el anterior
+  // queda huérfano (no se borra solo) y si dos generaciones se cruzan (doble
+  // clic, o un reintento mientras otro seguía en curso), el enlace en la
+  // hoja termina apuntando a la que haya terminado de última, sin importar
+  // si es la buena. Se borra el anterior para que solo quede uno.
+  if (respuesta.pdf_file_id && respuesta.pdf_file_id !== pdf.fileId) {
+    try {
+      DriveApp.getFileById(respuesta.pdf_file_id).setTrashed(true);
+    } catch (err) {
+      // Ya no existe o no se puede borrar: no es crítico, se ignora.
+    }
+  }
+
   var hoja = hoja_().getSheetByName(HOJAS.RESPUESTAS);
   guardarDatosPdf(hoja, id, pdf.fileId, pdf.url);
 

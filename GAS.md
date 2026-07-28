@@ -155,6 +155,27 @@ anterior. Hay que ir a **Implementar → Gestionar implementaciones →** (lápi
 Si en cambio creas una implementación *nueva* en vez de actualizar la existente,
 la URL cambia y hay que actualizarla en `.env` y en el secret de GitHub.
 
+### Con clasp (línea de comandos), en vez del editor web
+
+`gas/.clasp.json` ya deja este proyecto enlazado al script real (`scriptId`).
+Con `clasp` instalado y logueado (`clasp login`, una sola vez, abre el
+navegador):
+
+```bash
+cd gas
+clasp push                                    # sube Codigo.gs, Instalacion.gs, Pdf.gs, appsscript.json
+clasp version "Descripción del cambio"        # crea una versión inmutable nueva
+clasp deployments                             # confirma el id de la implementación activa
+clasp redeploy <deploymentId> -V <versión> -d "Descripción"   # publica esa versión sin cambiar la URL
+```
+
+`clasp push` reemplaza el set completo de archivos del proyecto — si algún
+archivo en Apps Script tiene un nombre distinto al de este repo (por ejemplo
+quedó con tilde, `Código` en vez de `Codigo`), el push lo reemplaza por el de
+aquí. `clasp pull` hace lo inverso: trae lo que hay en Apps Script a
+`gas/*.js` (extensión que usa clasp para representar `.gs`) para comparar
+antes de sobrescribir.
+
 ## Detalles técnicos que importan
 
 ### Content-Type de los POST
