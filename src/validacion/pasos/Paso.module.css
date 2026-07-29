@@ -189,6 +189,21 @@
   outline-offset: 1px;
 }
 
+/* Fondo teal para que "Agregar otra persona" no se confunda con un botón
+   secundario cualquiera. El selector repetido sube la especificidad para
+   ganarle a .secundario del componente Boton sin depender del orden de
+   carga de los CSS. */
+.botonAgregarPersona.botonAgregarPersona {
+  background: var(--acento-tenue);
+  border-color: var(--acento);
+  color: var(--acento-oscuro);
+}
+
+.botonAgregarPersona.botonAgregarPersona:hover:not(:disabled) {
+  background: var(--acento-lavado);
+  border-color: var(--acento-oscuro);
+}
+
 .rejillaConsolidado {
   display: grid;
   gap: var(--space-lg);

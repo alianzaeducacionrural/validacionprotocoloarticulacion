@@ -12,6 +12,7 @@ export function Boton({
   disabled = false,
   iconoIzquierda,
   iconoDerecha,
+  className,
   ...resto
 }) {
   return (
@@ -19,7 +20,7 @@ export function Boton({
       type={tipo}
       disabled={disabled || cargando}
       aria-busy={cargando || undefined}
-      className={`${estilos.boton} ${estilos[variante]}`}
+      className={`${estilos.boton} ${estilos[variante]} ${className ?? ''}`}
       {...resto}
     >
       {cargando ? (

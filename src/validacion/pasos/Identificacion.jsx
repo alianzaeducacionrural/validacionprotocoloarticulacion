@@ -118,6 +118,7 @@ export function Identificacion({
 
           <Boton
             variante="secundario"
+            className={estilos.botonAgregarPersona}
             onClick={onAgregarValidador}
             iconoIzquierda={<UserPlus size={18} weight="regular" aria-hidden="true" />}
           >
