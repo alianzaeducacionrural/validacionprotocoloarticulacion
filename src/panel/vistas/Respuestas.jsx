@@ -8,8 +8,8 @@ import { exportarRespuestas } from '../exportarCsv'
 import estilos from './Vista.module.css'
 
 const COLUMNAS = [
-  { clave: 'validador_nombre', etiqueta: 'Validador' },
-  { clave: 'validador_entidad', etiqueta: 'Entidad' },
+  { clave: 'nombrePrincipal', etiqueta: 'Validador' },
+  { clave: 'entidadPrincipal', etiqueta: 'Entidad' },
   { clave: 'fecha_validacion', etiqueta: 'Fecha' },
   { clave: 'promedio_general', etiqueta: 'Promedio', numerica: true },
 ]
@@ -22,19 +22,28 @@ export function Respuestas({ resumen, cargando, error }) {
   const filas = useMemo(() => {
     if (!resumen) return []
 
+    // Cada respuesta puede tener varias personas validando. Se deriva un
+    // nombre/entidad "principal" (la primera persona) para la tabla y una
+    // cadena con todas para buscar y para el título completo al pasar el mouse.
+    const respuestasConValidadores = resumen.respuestas.map((respuesta) => {
+      const validadores = respuesta.validadores ?? []
+      return {
+        ...respuesta,
+        nombrePrincipal: validadores[0]?.nombre || '—',
+        entidadPrincipal: validadores[0]?.entidad || '—',
+        cargoPrincipal: validadores[0]?.cargo || '',
+        otrasPersonas: validadores.length - 1,
+        textoCompleto: validadores.map((v) => `${v.nombre} ${v.entidad} ${v.cargo}`).join(' '),
+        nombresCompletos: validadores.map((v) => v.nombre).join(', '),
+      }
+    })
+
     const termino = busqueda.trim().toLowerCase()
     const filtradas = termino
-      ? resumen.respuestas.filter((respuesta) =>
-          [
-            respuesta.validador_nombre,
-            respuesta.validador_entidad,
-            respuesta.validador_cargo,
-          ]
-            .join(' ')
-            .toLowerCase()
-            .includes(termino),
+      ? respuestasConValidadores.filter((respuesta) =>
+          respuesta.textoCompleto.toLowerCase().includes(termino),
         )
-      : resumen.respuestas
+      : respuestasConValidadores
 
     return [...filtradas].sort((a, b) => {
       const valorA = a[ordenPor] ?? ''
@@ -136,11 +145,18 @@ export function Respuestas({ resumen, cargando, error }) {
           <tbody>
             {filas.map((respuesta) => (
               <tr key={respuesta.id}>
-                <td>
-                  <span className={estilos.celdaPrincipal}>{respuesta.validador_nombre}</span>
-                  <span className={estilos.celdaSecundaria}>{respuesta.validador_cargo}</span>
+                <td title={respuesta.otrasPersonas > 0 ? respuesta.nombresCompletos : undefined}>
+                  <span className={estilos.celdaPrincipal}>
+                    {respuesta.nombrePrincipal}
+                    {respuesta.otrasPersonas > 0 && (
+                      <span className={estilos.insigniaMas}>
+                        +{respuesta.otrasPersonas}
+                      </span>
+                    )}
+                  </span>
+                  <span className={estilos.celdaSecundaria}>{respuesta.cargoPrincipal}</span>
                 </td>
-                <td>{respuesta.validador_entidad}</td>
+                <td>{respuesta.entidadPrincipal}</td>
                 <td className={estilos.celdaMono}>{respuesta.fecha_validacion}</td>
                 <td>
                   <span
@@ -164,7 +180,7 @@ export function Respuestas({ resumen, cargando, error }) {
                 <td>
                   <Link className={estilos.enlaceDetalle} to={`/admin/respuestas/${respuesta.id}`}>
                     Ver detalle
-                    <span className="sr-only"> de {respuesta.validador_nombre}</span>
+                    <span className="sr-only"> de {respuesta.nombresCompletos}</span>
                   </Link>
                 </td>
               </tr>

@@ -80,6 +80,19 @@ export function Respuesta() {
     filas: valoraciones.filter((valoracion) => Number(valoracion.criterio_id) === criterio.id),
   }))
 
+  const validadores = respuesta.validadores ?? []
+  const [primerValidador] = validadores
+  const tituloValidadores =
+    validadores.length <= 1
+      ? primerValidador?.nombre || 'Sin nombre'
+      : `${primerValidador?.nombre} y ${validadores.length - 1} persona${
+          validadores.length - 1 === 1 ? '' : 's'
+        } más`
+  const subtituloValidadores =
+    validadores.length <= 1
+      ? [primerValidador?.cargo, primerValidador?.entidad].filter(Boolean).join(' · ')
+      : `${validadores.length} personas validaron esta respuesta`
+
   const consolidadoConTexto = CAMPOS_CONSOLIDADO.filter(
     (campo) => respuesta[`consolidado_${campo.clave}`],
   )
@@ -93,10 +106,8 @@ export function Respuesta() {
 
       <header className={estilos.detalleCabecera}>
         <div>
-          <h2 className={estilos.detalleTitulo}>{respuesta.validador_nombre}</h2>
-          <p className={estilos.detalleSubtitulo}>
-            {respuesta.validador_cargo} · {respuesta.validador_entidad}
-          </p>
+          <h2 className={estilos.detalleTitulo}>{tituloValidadores}</h2>
+          <p className={estilos.detalleSubtitulo}>{subtituloValidadores}</p>
         </div>
         <span
           className={estilos.detallePromedio}
@@ -117,6 +128,24 @@ export function Respuesta() {
           <dd>{respuesta.fecha_validacion}</dd>
         </div>
       </dl>
+
+      {validadores.length > 1 && (
+        <section className={estilos.tarjeta} aria-labelledby="titulo-personas">
+          <h3 id="titulo-personas" className={estilos.tituloTarjeta}>
+            Personas que validaron
+          </h3>
+          <ul className={estilos.listaPersonas}>
+            {validadores.map((validador, indice) => (
+              <li key={indice} className={estilos.filaPersona}>
+                <span className={estilos.personaNombre}>{validador.nombre}</span>
+                <span className={estilos.personaDetalle}>
+                  {[validador.cargo, validador.entidad].filter(Boolean).join(' · ')}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className={estilos.tarjeta} aria-labelledby="titulo-acta">
         <h3 id="titulo-acta" className={estilos.tituloTarjeta}>

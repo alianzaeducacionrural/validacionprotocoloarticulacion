@@ -61,9 +61,10 @@ var ENCABEZADOS_RESPUESTAS = [
   'timestamp',
   'version_documento',
   'fecha_validacion',
-  'validador_nombre',
-  'validador_entidad',
-  'validador_cargo',
+  // JSON de [{ nombre, entidad, cargo }, ...] — una validación puede tener
+  // varias personas (una sesión de comité, un grupo de trabajo). Ver
+  // parsearValidadores().
+  'validadores_json',
   'consolidado_fortalezas',
   'consolidado_aspectos_mejorar',
   'consolidado_ajustes_prioritarios',
@@ -164,9 +165,7 @@ function guardarValidacion(datos) {
     ahora.toISOString(),
     identificacion.version_documento || '',
     identificacion.fecha_validacion || '',
-    identificacion.validador_nombre || '',
-    identificacion.validador_entidad || '',
-    identificacion.validador_cargo || '',
+    JSON.stringify(identificacion.validadores || []),
     consolidado.fortalezas || '',
     consolidado.aspectos_mejorar || '',
     consolidado.ajustes_prioritarios || '',
@@ -277,12 +276,14 @@ function construirResumen() {
     };
   }
 
-  // Nombre y entidad por respuesta, para atribuir cada comentario.
+  // Nombre y entidad por respuesta, para atribuir cada comentario. Puede haber
+  // varias personas por respuesta: se juntan sus nombres para la atribución.
   var autores = {};
   respuestas.forEach(function (respuesta) {
+    var validadores = parsearValidadores(respuesta.validadores_json);
     autores[respuesta.id] = {
-      validador: respuesta.validador_nombre,
-      entidad: respuesta.validador_entidad,
+      validador: validadores.map(function (v) { return v.nombre; }).join(', ') || '—',
+      entidad: validadores.map(function (v) { return v.entidad; }).join(', ') || '—',
     };
   });
 
@@ -374,9 +375,7 @@ function construirResumen() {
         timestamp: respuesta.timestamp,
         version_documento: respuesta.version_documento,
         fecha_validacion: formatearFecha(respuesta.fecha_validacion),
-        validador_nombre: respuesta.validador_nombre,
-        validador_entidad: respuesta.validador_entidad,
-        validador_cargo: respuesta.validador_cargo,
+        validadores: parsearValidadores(respuesta.validadores_json),
         promedio_general: Number(respuesta.promedio_general),
         pdf_file_id: respuesta.pdf_file_id,
         pdf_url: respuesta.pdf_url,
@@ -414,6 +413,8 @@ function obtenerRespuesta(id) {
 
   respuesta.fecha_validacion = formatearFecha(respuesta.fecha_validacion);
   respuesta.promedio_general = Number(respuesta.promedio_general);
+  respuesta.validadores = parsearValidadores(respuesta.validadores_json);
+  delete respuesta.validadores_json;
 
   return {
     ok: true,
@@ -471,4 +472,14 @@ function formatearFecha(valor) {
     return Utilities.formatDate(valor, 'America/Bogota', 'yyyy-MM-dd');
   }
   return valor ? String(valor) : '';
+}
+
+/** Decodifica la columna validadores_json; nunca revienta con datos corruptos o vacíos. */
+function parsearValidadores(json) {
+  try {
+    var lista = JSON.parse(json || '[]');
+    return Array.isArray(lista) ? lista : [];
+  } catch (err) {
+    return [];
+  }
 }

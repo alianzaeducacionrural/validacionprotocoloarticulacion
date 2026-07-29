@@ -15,14 +15,20 @@ export function validarIdentificacion(identificacion) {
   if (!identificacion.fecha_validacion) {
     errores.fecha_validacion = 'Indica la fecha de la validación.'
   }
-  if (!identificacion.validador_nombre.trim()) {
-    errores.validador_nombre = 'Escribe tu nombre completo.'
-  }
-  if (!identificacion.validador_entidad.trim()) {
-    errores.validador_entidad = 'Indica la entidad o institución que representas.'
-  }
-  if (!identificacion.validador_cargo.trim()) {
-    errores.validador_cargo = 'Indica tu cargo o rol.'
+
+  // Puede validar más de una persona a la vez; cada una necesita sus tres datos.
+  const erroresValidadores = identificacion.validadores.map((validador) => {
+    const erroresPersona = {}
+    if (!validador.nombre.trim()) erroresPersona.nombre = 'Escribe el nombre completo.'
+    if (!validador.entidad.trim()) {
+      erroresPersona.entidad = 'Indica la entidad o institución que representa.'
+    }
+    if (!validador.cargo.trim()) erroresPersona.cargo = 'Indica el cargo o rol.'
+    return erroresPersona
+  })
+
+  if (erroresValidadores.some((errorPersona) => Object.keys(errorPersona).length > 0)) {
+    errores.validadores = erroresValidadores
   }
 
   return errores

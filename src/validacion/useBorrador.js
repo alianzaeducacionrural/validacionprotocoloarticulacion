@@ -10,9 +10,9 @@ export function estadoInicial() {
       // campo editable, se muestra como dato informativo (ver Identificacion.jsx).
       version_documento: '1',
       fecha_validacion: '',
-      validador_nombre: '',
-      validador_entidad: '',
-      validador_cargo: '',
+      // Una validación puede ser diligenciada por varias personas a la vez
+      // (una sesión de comité, un grupo de trabajo). Siempre hay al menos una.
+      validadores: [{ nombre: '', entidad: '', cargo: '' }],
     },
     // Por id de aspecto: { valoracion, observaciones, ajustes_requeridos, responsable }
     valoraciones: {},
@@ -82,6 +82,41 @@ export function useBorrador() {
     }))
   }, [])
 
+  const actualizarValidador = useCallback((indice, campo, valor) => {
+    setDatos((previo) => ({
+      ...previo,
+      identificacion: {
+        ...previo.identificacion,
+        validadores: previo.identificacion.validadores.map((validador, i) =>
+          i === indice ? { ...validador, [campo]: valor } : validador,
+        ),
+      },
+    }))
+  }, [])
+
+  const agregarValidador = useCallback(() => {
+    setDatos((previo) => ({
+      ...previo,
+      identificacion: {
+        ...previo.identificacion,
+        validadores: [
+          ...previo.identificacion.validadores,
+          { nombre: '', entidad: '', cargo: '' },
+        ],
+      },
+    }))
+  }, [])
+
+  const quitarValidador = useCallback((indice) => {
+    setDatos((previo) => ({
+      ...previo,
+      identificacion: {
+        ...previo.identificacion,
+        validadores: previo.identificacion.validadores.filter((_, i) => i !== indice),
+      },
+    }))
+  }, [])
+
   const actualizarAspecto = useCallback((aspectoId, campo, valor) => {
     setDatos((previo) => ({
       ...previo,
@@ -115,6 +150,9 @@ export function useBorrador() {
     paso,
     setPaso,
     actualizarIdentificacion,
+    actualizarValidador,
+    agregarValidador,
+    quitarValidador,
     actualizarAspecto,
     actualizarConsolidado,
     restaurar,

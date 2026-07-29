@@ -1,8 +1,18 @@
-import { FileText, UserCircle } from '@phosphor-icons/react'
+import { FileText, UserCircle, UserPlus, Trash } from '@phosphor-icons/react'
 import { Campo } from '../../ui/Campo'
+import { Boton } from '../../ui/Boton'
 import estilos from './Paso.module.css'
 
-export function Identificacion({ datos, onCambio, errores, onBlur }) {
+export function Identificacion({
+  datos,
+  onCambio,
+  errores,
+  onBlur,
+  onCambioValidador,
+  onBlurValidador,
+  onAgregarValidador,
+  onQuitarValidador,
+}) {
   return (
     <div className={estilos.paso}>
       <header className={estilos.encabezado}>
@@ -52,34 +62,67 @@ export function Identificacion({ datos, onCambio, errores, onBlur }) {
           Quien valida
         </legend>
         <div className={estilos.grupoContenido}>
-          <Campo
-            etiqueta="Nombre completo"
-            valor={datos.validador_nombre}
-            onChange={(valor) => onCambio('validador_nombre', valor)}
-            onBlur={() => onBlur('validador_nombre')}
-            error={errores.validador_nombre}
-            autoComplete="name"
-            requerido
-          />
-          <Campo
-            etiqueta="Entidad o institución"
-            valor={datos.validador_entidad}
-            onChange={(valor) => onCambio('validador_entidad', valor)}
-            onBlur={() => onBlur('validador_entidad')}
-            error={errores.validador_entidad}
-            ayuda="Institución educativa, secretaría, universidad u organización que representas."
-            autoComplete="organization"
-            requerido
-          />
-          <Campo
-            etiqueta="Cargo o rol"
-            valor={datos.validador_cargo}
-            onChange={(valor) => onCambio('validador_cargo', valor)}
-            onBlur={() => onBlur('validador_cargo')}
-            error={errores.validador_cargo}
-            autoComplete="organization-title"
-            requerido
-          />
+          {datos.validadores.length > 1 && (
+            <p className={estilos.descripcion}>
+              Puedes registrar a todas las personas que participaron en esta validación.
+            </p>
+          )}
+
+          {datos.validadores.map((validador, indice) => (
+            <div className={estilos.persona} key={indice}>
+              {datos.validadores.length > 1 && (
+                <div className={estilos.personaEncabezado}>
+                  <span className={estilos.personaNumero}>{indice + 1}</span>
+                  <button
+                    type="button"
+                    className={estilos.quitarPersona}
+                    onClick={() => onQuitarValidador(indice)}
+                  >
+                    <Trash size={16} weight="regular" aria-hidden="true" />
+                    Quitar
+                    <span className="sr-only"> a la persona {indice + 1}</span>
+                  </button>
+                </div>
+              )}
+
+              <Campo
+                etiqueta="Nombre completo"
+                valor={validador.nombre}
+                onChange={(valor) => onCambioValidador(indice, 'nombre', valor)}
+                onBlur={() => onBlurValidador(indice, 'nombre')}
+                error={errores.validadores?.[indice]?.nombre}
+                autoComplete="name"
+                requerido
+              />
+              <Campo
+                etiqueta="Entidad o institución"
+                valor={validador.entidad}
+                onChange={(valor) => onCambioValidador(indice, 'entidad', valor)}
+                onBlur={() => onBlurValidador(indice, 'entidad')}
+                error={errores.validadores?.[indice]?.entidad}
+                ayuda="Institución educativa, secretaría, universidad u organización que representa."
+                autoComplete="organization"
+                requerido
+              />
+              <Campo
+                etiqueta="Cargo o rol"
+                valor={validador.cargo}
+                onChange={(valor) => onCambioValidador(indice, 'cargo', valor)}
+                onBlur={() => onBlurValidador(indice, 'cargo')}
+                error={errores.validadores?.[indice]?.cargo}
+                autoComplete="organization-title"
+                requerido
+              />
+            </div>
+          ))}
+
+          <Boton
+            variante="secundario"
+            onClick={onAgregarValidador}
+            iconoIzquierda={<UserPlus size={18} weight="regular" aria-hidden="true" />}
+          >
+            Agregar otra persona
+          </Boton>
         </div>
       </fieldset>
     </div>

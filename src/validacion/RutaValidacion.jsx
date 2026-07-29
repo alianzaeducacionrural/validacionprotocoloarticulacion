@@ -32,6 +32,9 @@ export function RutaValidacion() {
     paso,
     setPaso,
     actualizarIdentificacion,
+    actualizarValidador,
+    agregarValidador,
+    quitarValidador,
     actualizarAspecto,
     actualizarConsolidado,
     restaurar,
@@ -100,6 +103,15 @@ export function RutaValidacion() {
     setErroresIdentificacion((previos) => ({ ...previos, [campo]: errores[campo] }))
   }
 
+  function validarCampoValidador(indice, campo) {
+    const errores = validarIdentificacion(datos.identificacion)
+    setErroresIdentificacion((previos) => {
+      const validadores = [...(previos.validadores ?? [])]
+      validadores[indice] = { ...validadores[indice], [campo]: errores.validadores?.[indice]?.[campo] }
+      return { ...previos, validadores }
+    })
+  }
+
   async function enviar() {
     // El backend rechazaría una validación incompleta; se corta antes de la red.
     if (valorados < TOTAL_ASPECTOS) return
@@ -149,7 +161,7 @@ export function RutaValidacion() {
     return (
       <main className={estilos.contenedorSimple}>
         <Enviado
-          nombre={datos.identificacion.validador_nombre.split(' ')[0]}
+          nombre={(datos.identificacion.validadores[0]?.nombre || '').split(' ')[0]}
           pdfFileId={resultadoEnvio?.pdf_file_id}
         />
       </main>
@@ -192,6 +204,10 @@ export function RutaValidacion() {
             onCambio={actualizarIdentificacion}
             onBlur={validarCampoIdentificacion}
             errores={erroresIdentificacion}
+            onCambioValidador={actualizarValidador}
+            onBlurValidador={validarCampoValidador}
+            onAgregarValidador={agregarValidador}
+            onQuitarValidador={quitarValidador}
           />
         )}
 

@@ -89,16 +89,19 @@ export function exportarRespuestas(respuestas) {
       'Promedio',
       'PDF',
     ],
-    respuestas.map((respuesta) => [
-      respuesta.id,
-      respuesta.timestamp,
-      respuesta.version_documento,
-      respuesta.fecha_validacion,
-      respuesta.validador_nombre,
-      respuesta.validador_entidad,
-      respuesta.validador_cargo,
-      respuesta.promedio_general?.toFixed?.(2) ?? respuesta.promedio_general ?? '',
-      respuesta.pdf_url || 'pendiente',
-    ]),
+    respuestas.map((respuesta) => {
+      const validadores = respuesta.validadores ?? []
+      return [
+        respuesta.id,
+        respuesta.timestamp,
+        respuesta.version_documento,
+        respuesta.fecha_validacion,
+        validadores.map((v) => v.nombre).join('; '),
+        validadores.map((v) => v.entidad).join('; '),
+        validadores.map((v) => v.cargo).join('; '),
+        respuesta.promedio_general?.toFixed?.(2) ?? respuesta.promedio_general ?? '',
+        respuesta.pdf_url || 'pendiente',
+      ]
+    }),
   )
 }

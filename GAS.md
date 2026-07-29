@@ -260,7 +260,7 @@ de un PDF puede abrirlo sin iniciar sesión.** Ver la advertencia del
   "respuestas": [
     { "id": "20260724-143052-a4f9", "timestamp": "...", "version_documento": "1",
       "fecha_validacion": "2026-07-24",
-      "validador_nombre": "...", "validador_entidad": "...", "validador_cargo": "...",
+      "validadores": [ { "nombre": "...", "entidad": "...", "cargo": "..." } ],
       "promedio_general": 3.4, "pdf_file_id": "1a2B...", "pdf_url": "https://..." }
   ],
   "aspectos": [
@@ -292,8 +292,7 @@ de un PDF puede abrirlo sin iniciar sesión.** Ver la advertencia del
 ```json
 {
   "identificacion": { "version_documento": "1", "fecha_validacion": "",
-                      "validador_nombre": "",
-                      "validador_entidad": "", "validador_cargo": "" },
+                      "validadores": [ { "nombre": "", "entidad": "", "cargo": "" } ] },
   "consolidado": { "fortalezas": "", "aspectos_mejorar": "",
                    "ajustes_prioritarios": "", "recomendaciones": "" },
   "valoraciones": [ { "criterio_id": 1, "criterio": "", "aspecto_id": "1.1",

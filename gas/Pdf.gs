@@ -144,7 +144,8 @@ function generarPdf(id, identificacion, consolidado, valoraciones, promedio) {
 }
 
 function nombreArchivo(id, identificacion) {
-  var entidad = (identificacion.validador_entidad || 'sin-entidad')
+  var primerValidador = (identificacion.validadores || [])[0] || {};
+  var entidad = (primerValidador.entidad || 'sin-entidad')
     .replace(/[^\wáéíóúñÁÉÍÓÚÑ ]/g, '')
     .trim()
     .replace(/\s+/g, '-')
@@ -161,9 +162,7 @@ function regenerarPdfDeRespuesta(id) {
   var identificacion = {
     version_documento: respuesta.version_documento,
     fecha_validacion: respuesta.fecha_validacion,
-    validador_nombre: respuesta.validador_nombre,
-    validador_entidad: respuesta.validador_entidad,
-    validador_cargo: respuesta.validador_cargo,
+    validadores: respuesta.validadores,
   };
   var consolidado = {
     fortalezas: respuesta.consolidado_fortalezas,
@@ -246,6 +245,18 @@ function escaparHtml(texto) {
 function construirHtmlActa(identificacion, consolidado, valoraciones, promedio) {
   var imagenes = logos();
 
+  var filasPersonas = (identificacion.validadores || [])
+    .map(function (v) {
+      return (
+        '<tr>' +
+        '<td>' + escaparHtml(v.nombre) + '</td>' +
+        '<td>' + escaparHtml(v.entidad) + '</td>' +
+        '<td>' + escaparHtml(v.cargo) + '</td>' +
+        '</tr>'
+      );
+    })
+    .join('');
+
   // Agrupa las 29 valoraciones por criterio conservando el orden de llegada.
   var criterios = [];
   var indicePorId = {};
@@ -315,6 +326,9 @@ function construirHtmlActa(identificacion, consolidado, valoraciones, promedio) 
     '.ficha { width: 100%; border-collapse: collapse; margin-bottom: 14px; }',
     '.ficha td { padding: 4px 8px; border: 1px solid #D9DDE3; vertical-align: top; }',
     '.ficha .clave { background: #F4F5F7; font-weight: bold; width: 15%; white-space: nowrap; }',
+    '.personas { width: 100%; border-collapse: collapse; margin-bottom: 14px; }',
+    '.personas th { background: #1F2933; color: #fff; font-size: 7.5pt; text-align: left; padding: 4px 8px; font-weight: 600; }',
+    '.personas td { padding: 4px 8px; border: 1px solid #D9DDE3; vertical-align: top; }',
     '.resumen { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #F4F5F7; border-radius: 4px; margin-bottom: 16px; }',
     '.resumenValor { font-size: 16pt; font-weight: bold; color: #fff; padding: 4px 12px; border-radius: 4px; }',
     '.criterio { margin-bottom: 14px; page-break-inside: avoid; }',
@@ -346,10 +360,12 @@ function construirHtmlActa(identificacion, consolidado, valoraciones, promedio) 
 
     '<table class="ficha">',
     '<tr><td class="clave">Versión</td><td>' + escaparHtml(identificacion.version_documento) + '</td>',
-    '<td class="clave">Fecha</td><td>' + escaparHtml(identificacion.fecha_validacion) + '</td>',
-    '<td class="clave">Valida</td><td>' + escaparHtml(identificacion.validador_nombre) + '</td></tr>',
-    '<tr><td class="clave">Entidad</td><td>' + escaparHtml(identificacion.validador_entidad) + '</td>',
-    '<td class="clave">Cargo</td><td colspan="3">' + escaparHtml(identificacion.validador_cargo) + '</td></tr>',
+    '<td class="clave">Fecha</td><td colspan="3">' + escaparHtml(identificacion.fecha_validacion) + '</td></tr>',
+    '</table>',
+
+    '<table class="personas">',
+    '<thead><tr><th>Persona que valida</th><th>Entidad o institución</th><th>Cargo o rol</th></tr></thead>',
+    '<tbody>' + filasPersonas + '</tbody>',
     '</table>',
 
     '<div class="resumen">',
