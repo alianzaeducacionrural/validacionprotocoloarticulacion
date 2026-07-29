@@ -126,7 +126,22 @@
 
 .acciones {
   display: flex;
+  flex-direction: column;
   gap: var(--space-sm);
   padding-top: var(--space-sm);
   border-top: 1px solid var(--borde);
+}
+
+.acciones > * {
+  justify-content: center;
+}
+
+@media (min-width: 30rem) {
+  .acciones {
+    flex-direction: row;
+  }
+
+  .acciones > * {
+    justify-content: flex-start;
+  }
 }

@@ -1,9 +1,13 @@
-import { ArrowRight, ClockCounterClockwise } from '@phosphor-icons/react'
+import { ArrowRight, ClockCounterClockwise, FileText } from '@phosphor-icons/react'
 import { MarcaInstitucional } from '../../ui/MarcaInstitucional'
 import { Boton } from '../../ui/Boton'
 import { NIVELES } from '../../datos/escala'
 import { TOTAL_ASPECTOS, TOTAL_CRITERIOS } from '../../datos/matriz'
 import estilos from './Portada.module.css'
+import estilosBoton from '../../ui/Boton.module.css'
+
+const URL_PROTOCOLO =
+  'https://drive.google.com/file/d/1Sn1i5MtzfC-QayJEbLlxqtKccfChW760/view?usp=sharing'
 
 export function Portada({ onComenzar, borradorDisponible, onContinuar }) {
   return (
@@ -54,6 +58,17 @@ export function Portada({ onComenzar, borradorDisponible, onContinuar }) {
       </section>
 
       <div className={estilos.acciones}>
+        <a
+          className={`${estilosBoton.boton} ${estilosBoton.secundario}`}
+          href={URL_PROTOCOLO}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FileText size={18} weight="regular" aria-hidden="true" />
+          <span>Ver protocolo</span>
+          <span className="sr-only"> (se abre en una pestaña nueva)</span>
+        </a>
+
         <Boton
           onClick={onComenzar}
           iconoDerecha={<ArrowRight size={18} weight="regular" aria-hidden="true" />}
